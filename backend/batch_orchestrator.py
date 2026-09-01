@@ -168,7 +168,7 @@ async def gemini_analysis(prompt: str) -> dict:
 
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-3.6-flash",
         contents=prompt,
         config=types.GenerateContentConfig(temperature=0.3),
     )
@@ -231,7 +231,7 @@ Do NOT include a subject line. Just the email body.
 
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-3.6-flash",
         contents=prompt,
         config=types.GenerateContentConfig(temperature=0.4),
     )
@@ -263,7 +263,7 @@ DETAILS: Brief explanation (1-2 sentences)
 
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-3.6-flash",
         contents=prompt,
         config=types.GenerateContentConfig(temperature=0.1),
     )

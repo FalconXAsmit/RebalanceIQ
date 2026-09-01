@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand-orange: #f97316;
+  --color-brand-orange-light: #fdba74;
+  --color-brand-orange-dark: #ea580c;
+
+  --color-success: #10b981;
+  --color-success-light: #34d399;
+  --color-danger: #ef4444;
+  --color-danger-light: #f87171;
+
+  --color-navy-50: #f8fafc;
+  --color-navy-100: #f1f5f9;
+  --color-navy-200: #e2e8f0;
+  --color-navy-300: #cbd5e1;
+  --color-navy-400: #94a3b8;
+  --color-navy-500: #64748b;
+  --color-navy-600: #475569;
+  --color-navy-700: #334155;
+  --color-navy-800: #1e293b;
+  --color-navy-900: #0f172a;
+  --color-navy-950: #020617;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --bg: #fafafa;
+  --bg-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  font-family: var(--font-sans);
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0f172a;
+  --bg-card: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border: #334155;
+  color-scheme: dark;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@layer utilities {
+  .text-primary {
+    color: var(--text-primary);
+  }
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+  .bg-surface {
+    background: var(--bg);
+  }
+  .bg-card {
+    background: var(--bg-card);
+  }
+  .border-default {
+    border-color: var(--border);
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.2s ease-out;
+  }
+  .animate-scaleIn {
+    animation: scaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+::selection {
+  background: rgba(249, 115, 22, 0.2);
+  color: inherit;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #f97316;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #f97316;
+  cursor: pointer;
+  border: 2px solid white;
+}
+input[type="range"] {
+  height: 6px;
+  background: var(--border);
+  border-radius: 999px;
+  appearance: none;
+  -webkit-appearance: none;
+}
