@@ -1,0 +1,12 @@
+{
+  "name": "rebalanceiq",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RebalanceIQ - AI-Powered Portfolio Intelligence Platform",
+  "scripts": {
+    "dev": "npx -y concurrently -n BACKEND,FRONTEND -c bgBlue.bold,bgMagenta.bold \"uv run uvicorn backend.main:app --reload --port 8000\" \"npm run dev --prefix frontend\"",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "uv run uvicorn backend.main:app --reload --port 8000",
+    "build": "npm run build --prefix frontend"
+  }
+}

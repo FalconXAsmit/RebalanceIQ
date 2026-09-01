@@ -5,6 +5,7 @@ import { ClientsScreen } from '@/screens/ClientsScreen'
 import { AlertsScreen } from '@/screens/AlertsScreen'
 import { BatchRunsScreen } from '@/screens/BatchRunsScreen'
 import { LandingScreen } from '@/screens/LandingScreen'
+import { PortfolioUploadScreen } from '@/screens/PortfolioUploadScreen'
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/clients" element={<ClientsScreen />} />
           <Route path="/alerts" element={<AlertsScreen />} />
           <Route path="/batch-runs" element={<BatchRunsScreen />} />
+          <Route path="/upload" element={<PortfolioUploadScreen />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

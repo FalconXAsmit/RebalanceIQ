@@ -8,6 +8,7 @@ import {
   Settings,
   X,
   BarChart2,
+  Upload,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -28,6 +29,7 @@ const navItems: NavItem[] = [
   { id: 'clients', path: '/clients', label: 'Clients', icon: <Users size={18} /> },
   { id: 'alerts', path: '/alerts', label: 'Pending Alerts', icon: <Bell size={18} /> },
   { id: 'batch-runs', path: '/batch-runs', label: 'Batch Runs', icon: <Activity size={18} /> },
+  { id: 'upload', path: '/upload', label: 'Portfolio Upload', icon: <Upload size={18} /> },
 ]
 
 export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
