@@ -1,0 +1,47 @@
+{
+  "components": [
+    {
+      "id": "input",
+      "provider": "webhook",
+      "config": {}
+    },
+    {
+      "id": "analysis_prompt",
+      "provider": "prompt",
+      "config": {
+        "prompt": "You are a senior financial analyst. Analyze the following portfolio drift data and provide a structured assessment.\n\nProvide your response in this exact format:\nANALYSIS: [2-3 sentences explaining why the portfolio drifted]\nMARKET_CONTEXT: [2-3 sentences about relevant market conditions]\nRECOMMENDATION: [2-3 sentences with specific rebalancing recommendation]"
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "input"
+        }
+      ]
+    },
+    {
+      "id": "analyzer_llm",
+      "provider": "llm_google",
+      "config": {
+        "model": "gemini-2.0-flash",
+        "temperature": 0.3
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "analysis_prompt"
+        }
+      ]
+    },
+    {
+      "id": "output",
+      "provider": "response_text",
+      "config": {},
+      "input": [
+        {
+          "lane": "answers",
+          "from": "analyzer_llm"
+        }
+      ]
+    }
+  ]
+}

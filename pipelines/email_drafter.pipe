@@ -1,0 +1,58 @@
+{
+  "components": [
+    {
+      "id": "input",
+      "provider": "webhook",
+      "config": {}
+    },
+    {
+      "id": "email_prompt",
+      "provider": "prompt",
+      "config": {
+        "prompt": "You are a professional financial advisor writing a brief client email about portfolio rebalancing. Write a warm, professional email body (4-6 sentences). Do NOT include a subject line. Address the client by first name. Do not give specific financial advice."
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "input"
+        }
+      ]
+    },
+    {
+      "id": "email_llm",
+      "provider": "llm_google",
+      "config": {
+        "model": "gemini-2.0-flash",
+        "temperature": 0.4
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "email_prompt"
+        }
+      ]
+    },
+    {
+      "id": "pii_filter",
+      "provider": "anonymize_text",
+      "config": {},
+      "input": [
+        {
+          "lane": "answers",
+          "from": "email_llm"
+        }
+      ]
+    },
+    {
+      "id": "output",
+      "provider": "response_text",
+      "config": {},
+      "input": [
+        {
+          "lane": "text",
+          "from": "pii_filter"
+        }
+      ]
+    }
+  ]
+}

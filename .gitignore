@@ -216,3 +216,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+.env
+.rocketride/
+.claude/
+.github/
+.python-version
+AGENTS.md
+CLAUDE.md

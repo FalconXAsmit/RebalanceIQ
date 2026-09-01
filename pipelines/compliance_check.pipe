@@ -1,0 +1,58 @@
+{
+  "components": [
+    {
+      "id": "input",
+      "provider": "webhook",
+      "config": {}
+    },
+    {
+      "id": "compliance_prompt",
+      "provider": "prompt",
+      "config": {
+        "prompt": "You are a financial compliance officer. Review the following portfolio recommendation for suitability.\n\nRules:\n- Conservative clients should NOT be recommended aggressive growth stocks\n- Aggressive clients should NOT be pushed toward overly conservative portfolios\n- All recommendations must match the client's stated risk tolerance\n\nRespond with exactly:\nSTATUS: PASS or FAIL or REVIEW\nCONFIDENCE: a number between 0.0 and 1.0\nDETAILS: Brief explanation (1-2 sentences)"
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "input"
+        }
+      ]
+    },
+    {
+      "id": "compliance_llm",
+      "provider": "llm_google",
+      "config": {
+        "model": "gemini-2.0-flash",
+        "temperature": 0.1
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "compliance_prompt"
+        }
+      ]
+    },
+    {
+      "id": "guardrails_check",
+      "provider": "guardrails",
+      "config": {},
+      "input": [
+        {
+          "lane": "answers",
+          "from": "compliance_llm"
+        }
+      ]
+    },
+    {
+      "id": "output",
+      "provider": "response_text",
+      "config": {},
+      "input": [
+        {
+          "lane": "answers",
+          "from": "guardrails_check"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "components": [
+    {
+      "id": "in",
+      "provider": "webhook",
+      "config": {}
+    },
+    {
+      "id": "advisor_llm",
+      "provider": "llm_openai",
+      "config": {
+        "model": "gpt-4o-mini",
+        "systemPrompt": "You are a financial advisor. You will receive portfolio drift data for a client. Write a short, personalized email to the client recommending a rebalance, explaining why it's necessary based on their target risk profile and the recent market drift. Keep it professional but accessible. Do not give financial advice beyond the provided data."
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "in"
+        }
+      ]
+    },
+    {
+      "id": "out",
+      "provider": "response",
+      "config": {
+        "laneName": "text"
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "advisor_llm"
+        }
+      ]
+    }
+  ]
+}
