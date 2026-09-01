@@ -102,8 +102,8 @@ export const DashboardResults = () => {
                 ].map(([lbl, val, Icon, cls]) => (
                   <div key={lbl as string} className="p-3 rounded-xl bg-navy-50 dark:bg-navy-800/40 border border-default">
                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${cls as string}`}><Icon size={14} /></div>
-                    <div className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-0.5">{lbl}</div>
-                    <div className="text-sm font-bold text-primary">{val}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-0.5">{lbl as any}</div>
+                    <div className="text-sm font-bold text-primary">{val as any}</div>
                   </div>
                 ))}
               </div>

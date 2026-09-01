@@ -20,7 +20,7 @@ import {
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Navbar } from '@/components/navigation/Navbar'
-import { useAppState } from '@/context/AppState'
+import { useNavigate } from 'react-router-dom'
 
 const miniChartData = [
   { m: 'Jan', p: 5000, b: 5000 },
@@ -95,7 +95,7 @@ const features = [
 export const LandingScreen = () => {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
-  const { setScreen } = useAppState()
+  const navigate = useNavigate()
   const axis = isDark ? '#64748b' : '#94a3b8'
 
   return (
@@ -107,11 +107,9 @@ export const LandingScreen = () => {
           <div
             className="absolute inset-0 -z-10 opacity-[0.35] pointer-events-none"
             style={{
-              backgroundImage: `radial-gradient(circle at 20% 20%, ${
-                isDark ? 'rgba(249,115,22,0.18)' : 'rgba(249,115,22,0.1)'
-              }, transparent 50%), radial-gradient(circle at 80% 30%, ${
-                isDark ? 'rgba(14,165,233,0.15)' : 'rgba(14,165,233,0.08)'
-              }, transparent 55%)`,
+              backgroundImage: `radial-gradient(circle at 20% 20%, ${isDark ? 'rgba(249,115,22,0.18)' : 'rgba(249,115,22,0.1)'
+                }, transparent 50%), radial-gradient(circle at 80% 30%, ${isDark ? 'rgba(14,165,233,0.15)' : 'rgba(14,165,233,0.08)'
+                }, transparent 55%)`,
             }}
           />
           <div className="absolute inset-0 -z-10 opacity-[0.04] pointer-events-none"
@@ -146,7 +144,7 @@ export const LandingScreen = () => {
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <Button
                     size="lg"
-                    onClick={() => setScreen('risk-assessment')}
+                    onClick={() => navigate('/dashboard')}
                     className="shadow-lg shadow-brand-orange/20"
                   >
                     Build My Portfolio
@@ -360,7 +358,7 @@ export const LandingScreen = () => {
             </div>
 
             <div className="mt-14 text-center">
-              <Button size="lg" onClick={() => setScreen('risk-assessment')}>
+              <Button size="lg" onClick={() => navigate('/dashboard')}>
                 Start My Journey
                 <ArrowRight size={18} />
               </Button>

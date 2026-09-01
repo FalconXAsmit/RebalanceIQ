@@ -1,6 +1,6 @@
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { Button } from '@/components/ui/Button'
-import { useAppState } from '@/context/AppState'
+import { useNavigate } from 'react-router-dom'
 import { Menu, X, BarChart2, Info } from 'lucide-react'
 import { useState } from 'react'
 
@@ -9,14 +9,14 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ variant = 'landing' }: NavbarProps) => {
-  const { setScreen } = useAppState()
+  const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[var(--bg)]/80 border-b border-default">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         <button
-          onClick={() => variant === 'landing' ? setScreen('landing') : setScreen('dashboard')}
+          onClick={() => variant === 'landing' ? navigate('/') : navigate('/dashboard')}
           className="flex items-center gap-2.5 group"
         >
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-orange to-brand-orange-dark flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
@@ -57,7 +57,7 @@ export const Navbar = ({ variant = 'landing' }: NavbarProps) => {
           <ThemeToggle />
           {variant === 'landing' && (
             <>
-              <Button size="sm" onClick={() => setScreen('risk-assessment')} className="hidden sm:inline-flex">
+              <Button size="sm" onClick={() => navigate('/dashboard')} className="hidden sm:inline-flex">
                 Get Started
               </Button>
               <button
@@ -94,7 +94,7 @@ export const Navbar = ({ variant = 'landing' }: NavbarProps) => {
           >
             How it works
           </button>
-          <Button fullWidth size="sm" onClick={() => { setMobileOpen(false); setScreen('risk-assessment') }}>
+          <Button fullWidth size="sm" onClick={() => { setMobileOpen(false); navigate('/dashboard') }}>
             Get Started
           </Button>
         </div>

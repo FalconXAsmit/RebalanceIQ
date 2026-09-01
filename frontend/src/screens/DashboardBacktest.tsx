@@ -230,14 +230,14 @@ export const DashboardBacktest = () => {
                         ['What helped', ai.whatHelped, 'text-success bg-success/10', TrendingUp],
                         ['Protected', ai.whatProtected, 'text-sky-500 bg-sky-500/10', Shield],
                         ['Rebalancing', ai.whatRebalancing, 'text-brand-orange bg-brand-orange/10', RefreshCcw],
-                      ].map(([lbl, txt, cls, Icon]) => (
+                      ].map(([lbl, txt, cls, Icon]: any) => (
                         <div key={lbl as string} className="flex gap-3 p-3 rounded-xl bg-card border border-default items-start">
                           <div className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center ${cls as string}`}>
                             <Icon size={14} />
                           </div>
                           <div>
-                            <div className="text-[10px] font-bold uppercase tracking-wider text-secondary">{lbl}</div>
-                            <div className="text-sm text-primary">{txt}</div>
+                            <div className="text-[10px] font-bold uppercase tracking-wider text-secondary">{lbl as string}</div>
+                            <div className="text-sm text-primary">{txt as string}</div>
                           </div>
                         </div>
                       ))}
