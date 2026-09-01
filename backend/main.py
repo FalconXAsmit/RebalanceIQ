@@ -2,6 +2,11 @@ from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
+import json
+import uuid
+
+from rocketride import RocketRideClient
+from rocketride.schema import Question
 
 from backend.ai import explain_backtest
 from backend.portfolio import get_portfolio, RISK_PORTFOLIOS
@@ -30,6 +35,7 @@ from backend.schemas import (
     ExplanationRequest,
     BenchmarkInfo,
     ClientCreate,
+    ClientAgenticCreate,
     ClientResponse,
     BatchRunCreate,
     BatchRunResponse,
@@ -275,8 +281,93 @@ def create_client(payload: ClientCreate, db: Session = Depends(get_db)):
         "id": client.id,
         "name": client.name,
         "risk_level": client.risk_level,
-        "message": "Client created successfully"
+        "target_weights": payload.target_weights,
     }
+
+
+@app.post("/clients/agentic")
+async def create_client_agentic(payload: ClientAgenticCreate, db: Session = Depends(get_db)):
+    """Create a client by classifying their risk profile from raw text via RocketRide."""
+    rr_client = RocketRideClient()
+    await rr_client.connect()
+
+    try:
+        # Load the pipeline JSON and inject a unique project_id to avoid "already running" errors
+        with open("pipelines/risk_classification.pipe", "r") as f:
+            pipe_data = json.load(f)
+        pipe_data["project_id"] = str(uuid.uuid4())
+        
+        result = await rr_client.use(pipeline=pipe_data)
+        token = result["token"]
+
+        question = Question(expectJson=True)
+        question.addInstruction("System", 
+            "You are a financial risk analyst. "
+            "Analyze the user's situation and determine their risk_level (Conservative, Moderate, Aggressive). "
+            "Then, generate an appropriate target_weights portfolio allocation using standard ETFs (e.g. VTI, VXUS, BND). "
+            "Return ONLY a JSON object with two keys: 'risk_level' (string) and 'target_weights' (object with tickers as keys and float weights as values, summing to 1.0)."
+        )
+        question.addQuestion(payload.raw_data)
+
+        response = await rr_client.chat(token=token, question=question)
+
+        if not response or "answers" not in response or len(response["answers"]) == 0:
+            raise HTTPException(status_code=500, detail="RocketRide pipeline failed to return an answer.")
+
+        # RocketRide chat response puts the answer directly in answers[0] if it's parsed JSON
+        # Since expectJson=True, content should be parsed dict if JSON, else str
+        content = response["answers"][0]
+        if isinstance(content, str):
+            try:
+                data = json.loads(content)
+            except Exception:
+                raise HTTPException(status_code=500, detail=f"Failed to parse LLM response: {content}")
+        else:
+            data = content
+
+        risk_level = data.get("risk_level", "Moderate")
+        if risk_level not in ["Conservative", "Moderate", "Aggressive"]:
+            risk_level = "Moderate"
+            
+        target_weights = data.get("target_weights", {})
+        
+        # Validate weights sum to ~1.0
+        if target_weights:
+            weight_sum = sum(target_weights.values())
+            if abs(weight_sum - 1.0) > 0.05:
+                # normalize
+                target_weights = {k: v / weight_sum for k, v in target_weights.items()}
+        else:
+            # Fallback
+            target_weights = {"VTI": 0.6, "VXUS": 0.3, "BND": 0.1}
+
+        client = Client(
+            advisor_id=payload.advisor_id,
+            name=payload.name,
+            email=payload.email,
+            risk_level=risk_level,
+            initial_investment=payload.initial_investment,
+        )
+        db.add(client)
+        db.flush()
+
+        portfolio = ClientPortfolio(
+            client_id=client.id,
+            target_weights=target_weights,
+        )
+        db.add(portfolio)
+        db.commit()
+        db.refresh(client)
+
+        return {
+            "id": client.id,
+            "name": client.name,
+            "risk_level": client.risk_level,
+            "target_weights": target_weights,
+        }
+
+    finally:
+        await rr_client.disconnect()
 
 
 @app.get("/clients/{client_id}")
@@ -301,6 +392,23 @@ def get_client(client_id: int, db: Session = Depends(get_db)):
         "current_weights": portfolio.current_weights if portfolio else None,
         "created_at": client.created_at,
     }
+
+
+@app.delete("/clients/{client_id}")
+def delete_client(client_id: int, db: Session = Depends(get_db)):
+    """Delete a client and their portfolio."""
+    client = db.query(Client).filter(Client.id == client_id).first()
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    
+    portfolio = db.query(ClientPortfolio).filter(ClientPortfolio.client_id == client.id).first()
+    if portfolio:
+        db.delete(portfolio)
+    
+    db.delete(client)
+    db.commit()
+    
+    return {"message": "Client deleted successfully"}
 
 
 # ────────────────────────────────────────────

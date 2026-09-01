@@ -77,6 +77,15 @@ class ClientCreate(BaseModel):
         description="Target allocation weights, e.g. {'AAPL': 0.15, 'MSFT': 0.20}"
     )
 
+class ClientAgenticCreate(BaseModel):
+    advisor_id: int
+    name: str
+    email: Optional[str] = None
+    initial_investment: float = Field(gt=0, default=10000.0)
+    raw_data: str = Field(
+        description="Unstructured text containing client profile, notes, or transcript."
+    )
+
 class ClientResponse(BaseModel):
     id: int
     advisor_id: int
