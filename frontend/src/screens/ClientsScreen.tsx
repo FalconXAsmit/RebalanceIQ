@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { Modal } from '@/components/ui/Modal'
 import { Plus, Users } from 'lucide-react'
 import { api, type Client } from '@/lib/api'
 
@@ -10,6 +11,17 @@ const ADVISOR_ID = 1;
 export const ClientsScreen = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', risk_level: 'Medium', initial_investment: 0 });
+
+  const handleAddClient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await api.addClient(formData);
+    setIsModalOpen(false);
+    setFormData({ name: '', email: '', risk_level: 'Medium', initial_investment: 0 });
+    const data = await api.getClients(ADVISOR_ID);
+    setClients(data);
+  };
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -37,7 +49,7 @@ export const ClientsScreen = () => {
               Manage your client book and their target portfolios.
             </p>
           </div>
-          <Button variant="outline" className="flex items-center gap-2" onClick={() => alert('Add client feature coming soon!')}>
+          <Button variant="outline" className="flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
             <Plus size={16} /> Add Client
           </Button>
         </div>
@@ -77,6 +89,34 @@ export const ClientsScreen = () => {
           )}
         </Card>
       </div>
+        <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add New Client">
+          <form onSubmit={handleAddClient} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-secondary mb-1">Name</label>
+              <input required type="text" className="w-full bg-navy-50 dark:bg-navy-900 border border-default rounded-lg px-3 py-2 text-primary focus:outline-none focus:border-brand-orange" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-secondary mb-1">Email</label>
+              <input type="email" className="w-full bg-navy-50 dark:bg-navy-900 border border-default rounded-lg px-3 py-2 text-primary focus:outline-none focus:border-brand-orange" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-secondary mb-1">Risk Level</label>
+              <select className="w-full bg-navy-50 dark:bg-navy-900 border border-default rounded-lg px-3 py-2 text-primary focus:outline-none focus:border-brand-orange" value={formData.risk_level} onChange={e => setFormData({...formData, risk_level: e.target.value})}>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-secondary mb-1">Initial Investment</label>
+              <input required type="number" min="0" className="w-full bg-navy-50 dark:bg-navy-900 border border-default rounded-lg px-3 py-2 text-primary focus:outline-none focus:border-brand-orange" value={formData.initial_investment} onChange={e => setFormData({...formData, initial_investment: Number(e.target.value)})} />
+            </div>
+            <div className="pt-4 flex justify-end gap-3">
+              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+              <Button type="submit">Add Client</Button>
+            </div>
+          </form>
+        </Modal>
     </DashboardLayout>
   )
 }
