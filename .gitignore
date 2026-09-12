@@ -224,3 +224,6 @@ __marimo__/
 .python-version
 AGENTS.md
 CLAUDE.md
+
+node_modules
+
